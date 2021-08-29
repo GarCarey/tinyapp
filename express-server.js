@@ -42,6 +42,16 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+function generateRandomString() {
+  let randomString = ""
+  const possibleChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+  for(let i = 0; i < 6; i++){
+    randomString = possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
+  }
+  return randomString;
+}
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
