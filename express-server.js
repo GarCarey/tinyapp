@@ -56,8 +56,13 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie("user", users["iD"]);
-  res.redirect("/urls");
+  const { email, password } = req.body; 
+
+  console.log(users);
+});
+
+app.get("/login", (req, res) => {
+  res.render("login");
 });
 
 app.post("/logout", (req, res) => {
@@ -74,7 +79,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { user: users[req.cookie.userID] };
+  const templateVars = { user: users[req.cookies.userID] };
   res.render("urls_new", templateVars);
 });
 
@@ -89,7 +94,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = { 
     shortURL: req.params.shortURL, 
     longURL: urlDatabase[req.params.shortURL],
-    user: users[req.cookie.userID]
+    user: users[req.cookies.userID]
   };
   res.render("urls_show", templateVars);
 });
