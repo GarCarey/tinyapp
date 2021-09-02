@@ -36,12 +36,20 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+  
+  if (!email || !password) {
+    return res.status(400).send("Email or Password cannot be blank");
+  } else if (findUserByEmail(email)) {
+    return res.status(400).send("Email is already registered. Please log in");
+  } 
+
   const userID = generateRandomString();
   users[userID] = {
     iD: userID,
     email: email,
     password: password
-  }
+  };
+
   res.cookie("userID", userID);
   console.log(users);
   res.redirect("/urls");
@@ -111,7 +119,17 @@ function generateRandomString() {
     randomString += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
   }
   return randomString;
-}
+};
+
+function findUserByEmail(email) {
+  for (const id in users) {
+    const user = users[id];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+};
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
