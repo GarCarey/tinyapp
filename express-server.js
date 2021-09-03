@@ -31,7 +31,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.render("register");
+  const templateVars = { user: users[req.cookies.userID] }
+
+  res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
@@ -57,16 +59,27 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body; 
-
+  const user = findUserByEmail(email);
+  
+  if (!user) {
+    return res.status(403).send("Email has not been registered. Please register");
+  } else if (password !== user.password) {
+    return res.status(403).send("Wrong password");
+  }
+  
+  res.cookie("userID", user.iD)
   console.log(users);
+  res.redirect("/urls");
 });
 
 app.get("/login", (req, res) => {
-  res.render("login");
+  const templateVars = { user: users[req.cookies.userID] }
+
+  res.render("login", templateVars);
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user", users["iD"]);
+  res.clearCookie("userID", users.iD);
   res.redirect("/urls");
 });
 
