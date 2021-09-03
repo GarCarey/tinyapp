@@ -10,8 +10,8 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if (username) { %>
-      <h4><%= username %>&emsp;</h4>
+    <% if (user) { %>
+      <h4><%= user["email"] %>&emsp;</h4>
       <form class="form-inline" action="/logout" method="POST">
         <div class="form-group mb-2">
               <button type="submit" class="btn btn-primary">Log Out</button>
@@ -20,8 +20,8 @@
     <% } else { %>
       <form class="form-inline" action="/login" method="POST">
         <div class="form-group mb-2">
-              <input class="form-control" type="text" name="username" placeholder="Username" style="width: 300px; margin: 1em">
-              <button type="submit" class="btn btn-primary">Log In</button>
+          <button class="btn btn-primary" href="/register">Register</button>
+          <button class="btn btn-primary" href="/login">Log In</button>
         </div>
       </form>
     <% } %>
