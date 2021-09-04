@@ -84,11 +84,19 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { 
-    urls: urlDatabase, 
-    user: users[req.cookies.userID] 
-  };
-  res.render("urls_index", templateVars);
+  const id = req.cookies.userID;
+
+  if (id) {
+    const urls = urlsForUser(id);
+    const templateVars = { 
+      urls: urls, 
+      user: users[id] 
+    };
+    res.render("urls_index", templateVars);
+  } else {
+    res.status(403).send("Please login or register to view URLs");
+  }
+
 });
 
 app.get("/urls/new", (req, res) => {
@@ -111,13 +119,25 @@ app.post("/urls", (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
+  const id = req.cookies.userID
   const { shortURL } = req.params;
-  const templateVars = { 
-    shortURL: shortURL, 
-    longURL: urlDatabase[shortURL].longURL,
-    user: users[req.cookies.userID]
-  };
-  res.render("urls_show", templateVars);
+
+  if(urlDatabase[shortURL].userID !== id){
+    return res.send("You do not have permission to view this URL")
+  }
+
+  if (id) {
+    const longURL = urlsForUser(id);
+    const templateVars = { 
+      shortURL: shortURL, 
+      longURL: longURL[shortURL].longURL,
+      user: users[id]
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(403).send("Please login or register to view URLs");
+  }
+
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -127,6 +147,12 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
+  const ID = req.cookies.userID;
+  const { shortURL } = req.params;
+
+  if(urlDatabase[shortURL].userID !== ID){
+    return res.send("You do not have permission to delete this URL")
+  }
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls/');
 });
@@ -135,6 +161,10 @@ app.post("/urls/:shortURL", (req, res) => {
   const userID = req.cookies.userID;
   const { shortURL } = req.params;
   const longURL = req.body.longURL
+
+  if(urlDatabase[shortURL].userID !== userID){
+    return res.send("You do not have permission to edit this URL")
+  }
   urlDatabase[shortURL] = { longURL, userID };
   res.redirect(`/urls/`);
 });
@@ -157,6 +187,19 @@ function findUserByEmail(email) {
     }
   }
   return null;
+};
+
+function urlsForUser(id) {
+  let newDB = {};
+
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      newDB[shortURL] = {
+        longURL: urlDatabase[shortURL].longURL,
+      };
+    }
+  }
+  return newDB;
 };
 
 app.listen(PORT, () => {
