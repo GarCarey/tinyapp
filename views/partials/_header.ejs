@@ -11,19 +11,21 @@
       </div>
     </div>
     <% if (user) { %>
-      <h4><%= user["email"] %>&emsp;</h4>
+      <h4>Logged in as: <%= user["email"] %>&emsp;</h4>
       <form class="form-inline" action="/logout" method="POST">
         <div class="form-group mb-2">
               <button type="submit" class="btn btn-primary">Log Out</button>
         </div>
       </form>
     <% } else { %>
-      <form class="form-inline" action="/login" method="POST">
         <div class="form-group mb-2">
-          <button class="btn btn-primary" href="/register">Register</button>
-          <button class="btn btn-primary" href="/login">Log In</button>
+          <form action="/register" method="GET">
+            <button class="btn btn-primary" href="/register">Register</button>
+          </form> 
+          <form action="/login" method="GET"> 
+            <button class="btn btn-primary" href="/login">Log In</button>
+          </form>
         </div>
-      </form>
     <% } %>
   </nav>
 </header>
