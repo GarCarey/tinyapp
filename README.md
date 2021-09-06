@@ -23,8 +23,8 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 TinyApp allow you to end a URL and will return to you a shortened version of the URL. When you create an account all of the URLs that you have will be shortened will be saved and visible in the app as well as giving you the option to edit any URL you have shortened.
 
-!["screenshot of Register page"]()
-!["screenshot Create URL page"](#)
-!["screenshot URL index page"](#)
-!["screenshot URL edit page"](#)
-!["screenshot login page"](#)
+!["screenshot of Register page"](https://github.com/GarCarey/tinyapp/blob/main/docs/register%20page.png)
+!["screenshot Create URL page"](https://github.com/GarCarey/tinyapp/blob/main/docs/Create%20TinyURL%20w%20URL.png)
+!["screenshot URL index page"](https://github.com/GarCarey/tinyapp/blob/main/docs/URL%20index%20page.png)
+!["screenshot URL edit page"](https://github.com/GarCarey/tinyapp/blob/main/docs/edit%20URL%20page.png)
+!["screenshot login page"](https://github.com/GarCarey/tinyapp/blob/main/docs/login%20page.png)
