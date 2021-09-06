@@ -7,7 +7,7 @@ const { findUserByEmail, generateRandomString, urlsForUser } = require('./helper
 
 // global variables
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
