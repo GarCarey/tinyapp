@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
+const { findUserByEmail } = require('./helpers');
 
 const app = express();
 const PORT = 3000;
@@ -52,7 +53,7 @@ app.post("/register", (req, res) => {
   
   if (!email ||!password) {
     return res.status(400).send("Email or Password cannot be blank");
-  } else if (findUserByEmail(email)) {
+  } else if (findUserByEmail(email, users)) {
     return res.status(400).send("Email is already registered. Please log in");
   } 
 
@@ -70,7 +71,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body; 
-  const user = findUserByEmail(email);
+  const user = findUserByEmail(email, users);
   let comparedPassword = true;
 
   if (!user) {
@@ -195,16 +196,6 @@ function generateRandomString() {
     randomString += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
   }
   return randomString;
-};
-
-function findUserByEmail(email) {
-  for (const id in users) {
-    const user = users[id];
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
 };
 
 function urlsForUser(id) {
