@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
-const { findUserByEmail } = require('./helpers');
+const { findUserByEmail, generateRandomString, urlsForUser } = require('./helpers');
 
 const app = express();
 const PORT = 3000;
@@ -106,7 +106,7 @@ app.get("/urls", (req, res) => {
   const id = req.session.userID;
 
   if (id) {
-    const urls = urlsForUser(id);
+    const urls = urlsForUser(id, urlDatabase);
     const templateVars = { 
       urls: urls, 
       user: users[id] 
@@ -146,7 +146,7 @@ app.get('/urls/:shortURL', (req, res) => {
   }
 
   if (id) {
-    const longURL = urlsForUser(id);
+    const longURL = urlsForUser(id, urlDatabase);
     const templateVars = { 
       shortURL: shortURL, 
       longURL: longURL[shortURL].longURL,
@@ -187,29 +187,6 @@ app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[shortURL] = { longURL, userID };
   res.redirect(`/urls/`);
 });
-
-function generateRandomString() {
-  let randomString = ""
-  const possibleChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-  for (let i = 0; i < 6; i++) {
-    randomString += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
-  }
-  return randomString;
-};
-
-function urlsForUser(id) {
-  let newDB = {};
-
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      newDB[shortURL] = {
-        longURL: urlDatabase[shortURL].longURL,
-      };
-    }
-  }
-  return newDB;
-};
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
