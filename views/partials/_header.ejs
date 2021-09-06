@@ -1,13 +1,13 @@
 <header>
   <nav class="navbar navbar-expand-md nabar-dark bg-success">
-    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <a class="navbar-brand" href="/urls" style="color: white;">TinyApp</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-targets="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav=item nav-link" href="/urls">My URLs</a>
-        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        <a class="nav=item nav-link" href="/urls" style="color: white;">My URLs</a>
+        <a class="nav-item nav-link" href="/urls/new" style="color: white;">Create New URL</a>
       </div>
     </div>
     <% if (user) { %>
@@ -18,10 +18,11 @@
         </div>
       </form>
     <% } else { %>
-        <div class="form-group mb-2">
+        <div class="form-inline">
           <form action="/register" method="GET">
             <button class="btn btn-primary" href="/register">Register</button>
           </form> 
+          <div class="divider">&ensp;</div>
           <form action="/login" method="GET"> 
             <button class="btn btn-primary" href="/login">Log In</button>
           </form>
