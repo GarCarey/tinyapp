@@ -24,23 +24,25 @@ app.use(cookieSession({
 const urlDatabase = {};
 
 // DB that houses registered users
-const users = {};
+const usersDatabase = {};
 
 //   GET routes
 
 app.get("/", (req, res) => {
-  res.redirect('/login');
+  res.redirect('/urls');
 });
 
 app.get("/register", (req, res) => {
   const id = req.session.userID
-  const templateVars = { user: users[id] }
+  const templateVars = { user: usersDatabase[id] }
 
   res.render("register", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = { user: users[req.session.userID] }
+  const { userID } = req.session;
+  const user = usersDatabase[userID];
+  const templateVars = { user };
 
   res.render("login", templateVars);
 });
@@ -52,17 +54,19 @@ app.get("/urls", (req, res) => {
     const urls = urlsForUser(id, urlDatabase);
     const templateVars = { 
       urls: urls, 
-      user: users[id] 
+      user: usersDatabase[id] 
     };
     res.render("urls_index", templateVars);
   } else {
-    res.status(403).send("Please login or register to view URLs");
+    return res.status(403).send("Please login or register to view URLs");
   }
 
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { user: users[req.session.userID] };
+  const { userID } = req.session;
+  const user = usersDatabase[userID];
+  const templateVars = { user };
 
   if (!templateVars.user) {
     res.redirect("/login");
@@ -73,7 +77,11 @@ app.get("/urls/new", (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const id = req.session.userID
-  const { shortURL } = req.params;
+  const shortURL = req.params.shortURL;
+
+  if(!urlDatabase[shortURL]) {
+    return res.status(404).send("URL does not exist, please check for correct URL");
+  }
 
   if(urlDatabase[shortURL].userID !== id){
     return res.send("You do not have permission to view this URL")
@@ -84,17 +92,20 @@ app.get('/urls/:shortURL', (req, res) => {
     const templateVars = { 
       shortURL: shortURL, 
       longURL: longURL[shortURL].longURL,
-      user: users[id]
+      user: usersDatabase[id]
     };
     res.render("urls_show", templateVars);
   } else {
-    res.status(403).send("Please login or register to view URLs");
+    return res.status(403).send("Please login or register to view URLs");
   }
 
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const { shortURL } = req.params;
+  const shortURL = req.params.shortURL;
+  if(!urlDatabase[shortURL]){
+    return res.status(404).send("URL does not exist, please check for correct URL")
+  }
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL)
 });
@@ -108,12 +119,12 @@ app.post("/register", (req, res) => {
   
   if (!email ||!password) {
     return res.status(400).send("Email or Password cannot be blank");
-  } else if (findUserByEmail(email, users)) {
+  } else if (findUserByEmail(email, usersDatabase)) {
     return res.status(400).send("Email is already registered. Please log in");
   } 
 
   const userID = generateRandomString();
-  users[userID] = {
+  usersDatabase[userID] = {
     id: userID,
     email: email,
     password: hashedPassword
@@ -125,7 +136,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body; 
-  const user = findUserByEmail(email, users);
+  const user = findUserByEmail(email, usersDatabase);
   let comparedPassword = true;
 
   if (!user) {
@@ -154,7 +165,7 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString(); 
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = { longURL, userID};
-  res.redirect(`/urls/`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
